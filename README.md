@@ -1,0 +1,2 @@
+# QuickRead
+summarizes web pages
