@@ -23,6 +23,20 @@
         "matches": ["<all_urls>"],
         "js": ["content.js"]
       }
+    ],
+    "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'",
+    "sandbox": "script-src 'self' ; object-src 'self'",
+    "script-src": [
+      "self",
+      "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs",
+      "https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"
+    ],
+    "script-src-elem": [
+      "self",
+      "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs",
+      "https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"
     ]
+  }
   }
   
