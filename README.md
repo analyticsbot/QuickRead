@@ -1,13 +1,19 @@
 # QuickRead Chrome Extension
 
-QuickRead is a Chrome extension that uses TensorFlow.js and the Universal Sentence Encoder to summarize web page content directly in your browser.
+QuickRead is a Chrome extension that summarizes web page content directly in your browser. It supports multiple AI models, including local options for privacy and cloud-based services for enhanced capabilities.
 
 ## Features
 
 - Extracts and summarizes text content from any web page
+- Supports multiple AI models:
+  - **Local Ollama models** (default for privacy)
+  - **LM Studio** for local inference
+  - **OpenAI** (GPT-4o)
+  - **Grok** 
+  - **Claude** (Claude 3 Opus)
 - Adjustable summary length (short, medium, long)
 - Choose between bullet points or paragraph format
-- No server-side processing - all summarization happens locally in your browser
+- All processing happens locally by default - your data never leaves your computer
 
 ## Installation
 
@@ -25,23 +31,56 @@ QuickRead is a Chrome extension that uses TensorFlow.js and the Universal Senten
 4. Click "Summarize" to generate a summary of the page content
 5. The summary will appear in the popup window
 
+## AI Model Configuration
+
+QuickRead supports multiple AI models for summarization:
+
+### Local Models (Default)
+
+By default, QuickRead uses Ollama for local summarization, which keeps all your data on your machine.
+
+- **Requirements**: [Ollama](https://ollama.ai/) must be installed and running on your computer
+- **Default Model**: llama3 (can be changed in settings)
+
+### LM Studio
+
+For more powerful local inference:
+
+- **Requirements**: [LM Studio](https://lmstudio.ai/) must be installed and running with the API server enabled
+- **Configuration**: Set the endpoint in settings (default: http://localhost:1234/v1)
+
+### Cloud Models
+
+For enhanced summarization capabilities, you can use cloud-based models:
+
+- **OpenAI**: Requires an API key from [OpenAI](https://platform.openai.com/)
+- **Grok**: Requires an API key from [Grok](https://grok.x.ai/)
+- **Claude**: Requires an API key from [Anthropic](https://www.anthropic.com/)
+
+To use these models, go to the Settings page and enter your API keys.
+
+## Privacy
+
+QuickRead takes your privacy seriously:
+
+- By default, all processing happens locally on your machine
+- Your API keys are stored only in your browser's local storage
+- No data is sent to our servers
+- When using cloud models, data is sent directly to the respective API providers
+
 ## How It Works
 
-QuickRead uses TensorFlow.js and the Universal Sentence Encoder to:
+QuickRead uses different approaches to summarize content:
 
-1. Extract text content from the current web page
-2. Split the text into sentences
-3. Generate embeddings for each sentence using the Universal Sentence Encoder
-4. Score sentences based on their semantic importance
-5. Select the most important sentences to create a concise summary
-6. Present the summary in your preferred format
+1. **AI-based summarization**: Uses various AI models to generate concise summaries
+2. **Legacy TensorFlow.js method**: Falls back to a local embedding-based approach using TensorFlow.js if AI models are unavailable
 
 ## Technical Details
 
 - Built with vanilla JavaScript
-- Uses TensorFlow.js for in-browser machine learning
-- Implements the Universal Sentence Encoder for natural language processing
-- Chrome Extension Manifest V3 compliant
+- Uses Chrome Extension Manifest V3
+- Supports multiple AI models through a unified interface
+- Stores settings in Chrome's local storage for persistence
 
 ## License
 

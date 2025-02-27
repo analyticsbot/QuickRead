@@ -2,6 +2,47 @@ document.addEventListener('DOMContentLoaded', () => {
   const summarizeButton = document.getElementById('summarize');
   const outputDiv = document.getElementById('output');
   const statusDiv = document.getElementById('status');
+  const modelInfoSpan = document.getElementById('modelInfo');
+
+  // Load and display current model information
+  updateModelInfo();
+
+  // Function to update model info display
+  async function updateModelInfo() {
+    try {
+      if (window.QuickReadModels) {
+        const config = await window.QuickReadModels.getConfig();
+        let modelName = 'local';
+        
+        switch (config.modelType) {
+          case 'local':
+            modelName = `Local (${config.localModelName || 'llama3'})`;
+            break;
+          case 'lmstudio':
+            modelName = 'LM Studio';
+            break;
+          case 'openai':
+            modelName = 'OpenAI';
+            break;
+          case 'grok':
+            modelName = 'Grok';
+            break;
+          case 'claude':
+            modelName = 'Claude';
+            break;
+          default:
+            modelName = 'Local';
+        }
+        
+        modelInfoSpan.textContent = `Using ${modelName}`;
+      } else {
+        modelInfoSpan.textContent = 'Using TensorFlow.js (legacy)';
+      }
+    } catch (error) {
+      console.error('Error updating model info:', error);
+      modelInfoSpan.textContent = 'Using TensorFlow.js (legacy)';
+    }
+  }
 
   // Function to update status
   function updateStatus(message, isError = false) {

@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "QuickRead",
   "version": "1.0",
-  "description": "Summarize web page content with AI.",
-  "permissions": ["activeTab", "scripting"],
+  "description": "Summarize web page content with AI models, including local and cloud options.",
+  "permissions": ["activeTab", "scripting", "storage"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -21,7 +21,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["models.js", "content.js"]
     }
   ],
   "content_security_policy": {
@@ -30,7 +30,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["icon.png"],
+      "resources": ["icon.png", "settings.html"],
       "matches": ["<all_urls>"]
     }
   ]

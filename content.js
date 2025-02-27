@@ -1,4 +1,4 @@
-// Load TensorFlow.js and Universal Sentence Encoder
+// Load TensorFlow.js and Universal Sentence Encoder (legacy method)
 let use;
 (async function loadModel() {
   try {
@@ -28,30 +28,64 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     
     // Extract text from the page
     const rawText = document.body.innerText || "";
-    const sentences = preprocessText(rawText);
     
-    // Generate summary
-    generateSummary(sentences, request.brevity)
-      .then(summary => {
-        console.log("Summary generated:", summary);
-        sendResponse({ summary });
+    // Check if we should use AI models or legacy TensorFlow method
+    if (typeof window.QuickReadModels !== 'undefined') {
+      // Use AI models for summarization
+      console.log("Using AI models for summarization");
+      
+      // Process with AI models
+      window.QuickReadModels.generateSummaryWithAI(rawText, {
+        brevity: request.brevity,
+        format: request.format
       })
-      .catch(error => {
-        console.error("Error generating summary:", error);
-        sendResponse({ error: "Failed to generate summary" });
-      });
+        .then(summary => {
+          console.log("AI summary generated:", summary);
+          sendResponse({ summary });
+        })
+        .catch(error => {
+          console.error("Error generating AI summary:", error);
+          // Fall back to TensorFlow method if AI fails
+          generateLegacySummary(rawText, request.brevity)
+            .then(summary => {
+              console.log("Fallback summary generated:", summary);
+              sendResponse({ summary });
+            })
+            .catch(fallbackError => {
+              console.error("Fallback summarization failed:", fallbackError);
+              sendResponse({ error: "Failed to generate summary" });
+            });
+        });
+    } else {
+      // Use legacy TensorFlow method
+      console.log("Using legacy TensorFlow method for summarization");
+      const sentences = preprocessText(rawText);
+      
+      generateLegacySummary(rawText, request.brevity)
+        .then(summary => {
+          console.log("Legacy summary generated:", summary);
+          sendResponse({ summary });
+        })
+        .catch(error => {
+          console.error("Error generating legacy summary:", error);
+          sendResponse({ error: "Failed to generate summary" });
+        });
+    }
     
     // Return true to indicate async response
     return true;
   }
 });
 
-async function generateSummary(sentences, brevity) {
+// Legacy summary generation using TensorFlow.js
+async function generateLegacySummary(text, brevity) {
   console.log("Generating summary using TensorFlow.js");
   
   if (!use) {
     throw new Error("Universal Sentence Encoder not loaded");
   }
+  
+  const sentences = preprocessText(text);
   
   if (sentences.length === 0) {
     return "No content found to summarize.";
@@ -94,7 +128,7 @@ async function generateSummary(sentences, brevity) {
     
     return summary || "No summary available.";
   } catch (error) {
-    console.error("Error in generateSummary:", error);
+    console.error("Error in generateLegacySummary:", error);
     return "Error generating summary. Please try again.";
   }
 }
