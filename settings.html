@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QuickRead Settings</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container settings-container">
+    <h1>QuickRead Settings</h1>
+    
+    <div class="notice">
+      <p><strong>Privacy Notice:</strong> All processing happens locally in your browser. Your API keys and content are never sent to our servers.</p>
+    </div>
+    
+    <form id="settingsForm">
+      <div class="settings-section">
+        <h2>Model Selection</h2>
+        <div class="form-group">
+          <label for="modelType">Select AI Model:</label>
+          <select id="modelType" name="modelType">
+            <option value="local">Local (Ollama)</option>
+            <option value="lmstudio">LM Studio</option>
+            <option value="openai">OpenAI</option>
+            <option value="grok">Grok</option>
+            <option value="claude">Claude</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="settings-section" id="localSettings">
+        <h2>Local Model Settings</h2>
+        <div class="form-group">
+          <label for="localModelName">Ollama Model Name:</label>
+          <input type="text" id="localModelName" name="localModelName" placeholder="llama3">
+          <p class="help-text">Make sure you have Ollama installed and running locally</p>
+        </div>
+      </div>
+      
+      <div class="settings-section" id="lmStudioSettings">
+        <h2>LM Studio Settings</h2>
+        <div class="form-group">
+          <label for="lmStudioEndpoint">LM Studio Endpoint:</label>
+          <input type="text" id="lmStudioEndpoint" name="lmStudioEndpoint" placeholder="http://localhost:1234/v1">
+          <p class="help-text">Make sure LM Studio is running and the API server is enabled</p>
+        </div>
+      </div>
+      
+      <div class="settings-section" id="apiSettings">
+        <h2>API Keys</h2>
+        <div class="form-group">
+          <label for="openaiKey">OpenAI API Key:</label>
+          <input type="password" id="openaiKey" name="openaiKey" placeholder="sk-...">
+        </div>
+        
+        <div class="form-group">
+          <label for="grokKey">Grok API Key:</label>
+          <input type="password" id="grokKey" name="grokKey" placeholder="grok-...">
+        </div>
+        
+        <div class="form-group">
+          <label for="claudeKey">Claude API Key:</label>
+          <input type="password" id="claudeKey" name="claudeKey" placeholder="sk-ant-...">
+        </div>
+      </div>
+      
+      <div class="settings-section">
+        <h2>Advanced Settings</h2>
+        <div class="form-group">
+          <label for="temperature">Temperature:</label>
+          <input type="range" id="temperature" name="temperature" min="0" max="1" step="0.1" value="0.7">
+          <span id="temperatureValue">0.7</span>
+          <p class="help-text">Lower values produce more focused summaries, higher values more creative ones</p>
+        </div>
+        
+        <div class="form-group">
+          <label for="maxTokens">Max Tokens:</label>
+          <input type="number" id="maxTokens" name="maxTokens" min="100" max="2000" value="500">
+          <p class="help-text">Maximum length of the generated summary</p>
+        </div>
+      </div>
+      
+      <div class="button-group">
+        <button type="submit" id="saveSettings">Save Settings</button>
+        <button type="button" id="resetSettings">Reset to Defaults</button>
+      </div>
+    </form>
+    
+    <div id="status" class="status"></div>
+  </div>
+  
+  <script src="settings.js"></script>
+</body>
+</html>
