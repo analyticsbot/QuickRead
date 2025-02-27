@@ -1,36 +1,87 @@
-document.getElementById('summarize').addEventListener('click', () => {
-    console.log('Summarize button clicked'); // Debugging log
+document.addEventListener('DOMContentLoaded', () => {
+  const summarizeButton = document.getElementById('summarize');
+  const outputDiv = document.getElementById('output');
+  const statusDiv = document.getElementById('status');
+
+  // Function to update status
+  function updateStatus(message, isError = false) {
+    statusDiv.textContent = message;
+    statusDiv.className = isError ? 'status error' : 'status';
+    setTimeout(() => {
+      statusDiv.textContent = '';
+      statusDiv.className = 'status';
+    }, 5000);
+  }
+
+  // Function to generate summary
+  function generateSummary() {
     const brevity = document.getElementById('brevity').value;
     const format = document.getElementById('format').value;
-  
-    console.log(`Selected brevity: ${brevity}, format: ${format}`); // Debugging log
-  
+    
+    console.log(`Selected brevity: ${brevity}, format: ${format}`);
+    
+    // Show loading state
+    outputDiv.innerHTML = '<p>Generating summary...</p>';
+    updateStatus('Processing page content...');
+    
     // Send a message to the content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs.length === 0) {
         console.error('No active tab found');
+        outputDiv.innerHTML = '<p>Error: No active tab found.</p>';
+        updateStatus('Error: No active tab found', true);
         return;
       }
-  
+      
+      const tabId = tabs[0].id;
+      
       chrome.tabs.sendMessage(
-        tabs[0].id,
+        tabId,
         { action: 'summarize', brevity, format },
         (response) => {
-          console.log('Response from content script:', response); // Debugging log
-          const output = document.getElementById('output');
+          // Check for error
+          if (chrome.runtime.lastError) {
+            console.error('Error:', chrome.runtime.lastError);
+            outputDiv.innerHTML = '<p>Error: Could not communicate with the page. Please refresh and try again.</p>';
+            updateStatus('Communication error', true);
+            return;
+          }
+          
+          console.log('Response from content script:', response);
+          
           if (response && response.summary) {
-            output.innerHTML =
-              format === 'bullets'
-                ? `<ul>${response.summary
-                    .split('\n')
-                    .map((item) => `<li>${item}</li>`)
-                    .join('')}</ul>`
-                : `<p>${response.summary}</p>`;
+            // Format the summary based on user preference
+            if (format === 'bullets') {
+              const bulletPoints = response.summary
+                .split('. ')
+                .filter(sentence => sentence.trim().length > 0)
+                .map(sentence => {
+                  // Add period if it doesn't end with one
+                  if (!sentence.endsWith('.') && !sentence.endsWith('!') && !sentence.endsWith('?')) {
+                    sentence += '.';
+                  }
+                  return `<li>${sentence}</li>`;
+                })
+                .join('');
+              
+              outputDiv.innerHTML = `<ul>${bulletPoints}</ul>`;
+            } else {
+              outputDiv.innerHTML = `<p>${response.summary}</p>`;
+            }
+            
+            updateStatus('Summary generated successfully!');
+          } else if (response && response.error) {
+            outputDiv.innerHTML = `<p>Error: ${response.error}</p>`;
+            updateStatus('Error generating summary', true);
           } else {
-            output.innerHTML = '<p>No summary available.</p>';
+            outputDiv.innerHTML = '<p>No summary available.</p>';
+            updateStatus('No content could be summarized', true);
           }
         }
       );
     });
-  });
-  
+  }
+
+  // Add click event listener
+  summarizeButton.addEventListener('click', generateSummary);
+});

@@ -1,42 +1,37 @@
 {
-    "manifest_version": 3,
-    "name": "QuickRead",
-    "version": "1.0",
-    "description": "Summarize web page content in a sidebar.",
-    "permissions": ["activeTab", "scripting"],
-    "action": {
-      "default_popup": "popup.html",
-      "default_icon": {
-        "16": "icon.png",
-        "48": "icon.png",
-        "128": "icon.png"
-      }
-    },
-    "host_permissions": [
-      "<all_urls>"
-    ],
-    "background": {
-      "service_worker": "background.js"
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-      }
-    ],
-    "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'",
-    "sandbox": "script-src 'self' ; object-src 'self'",
-    "script-src": [
-      "self",
-      "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs",
-      "https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"
-    ],
-    "script-src-elem": [
-      "self",
-      "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs",
-      "https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"
-    ]
-  }
-  }
-  
+  "manifest_version": 3,
+  "name": "QuickRead",
+  "version": "1.0",
+  "description": "Summarize web page content with AI.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' https://cdn.jsdelivr.net; object-src 'self'",
+    "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' https://cdn.jsdelivr.net; worker-src 'self'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["icon.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
